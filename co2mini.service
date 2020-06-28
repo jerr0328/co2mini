@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/usr/bin/python3 /home/pi/co2_prometheus/main.py /dev/co2mini0
+ExecStart=/home/pi/.local/bin/co2mini /dev/co2mini0
 
 [Install]
 WantedBy=multi-user.target
