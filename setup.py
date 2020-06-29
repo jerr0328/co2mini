@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="co2mini",
-    version="0.1.0",
+    version="0.1.1",
     author="Jeremy Mayeres",
     author_email="jeremy@jerr.dev",
     description="Monitor CO2 levels with Prometheus and/or HomeKit",

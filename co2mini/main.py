@@ -24,7 +24,8 @@ def co2_callback(sensor, value):
 
 
 def main():
-    device = sys.argv[1] or "/dev/co2mini0"
+    # TODO: Better CLI handling
+    device = sys.argv[1] if len(sys.argv) > 1 else "/dev/co2mini0"
     logger.info("Starting with device %s", device)
 
     # Expose metrics
@@ -40,6 +41,9 @@ def main():
         start_homekit(co2meter)
     except ImportError:
         pass
+
+    # Ensure thread doesn't just end without cleanup
+    co2meter.join()
 
 
 if __name__ == "__main__":
