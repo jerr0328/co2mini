@@ -42,7 +42,6 @@ def start_homekit(co2meter):
     # Start the accessory on port 51826
     driver = AccessoryDriver(port=51826)
 
-    # Change `get_accessory` to `get_bridge` if you want to run a Bridge.
     driver.add_accessory(
         accessory=CO2Sensor(co2meter=co2meter, driver=driver, display_name="CO2 Sensor")
     )
