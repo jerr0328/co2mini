@@ -2,4 +2,6 @@ black
 flake8
 isort
 pre-commit
+setuptools
 twine
+wheel
