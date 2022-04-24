@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def _convert_value(sensor, value):
-    """ Apply Conversion of value dending on sensor type """
+    """Apply Conversion of value dending on sensor type"""
     if sensor == CO2METER_TEMP:
         return round(value / 16.0 - 273.1, 1)
     if sensor == CO2METER_HUM:
@@ -25,7 +25,7 @@ def _convert_value(sensor, value):
 
 
 def _hd(data):
-    """ Helper function for printing the raw data """
+    """Helper function for printing the raw data"""
     return " ".join("%02X" % e for e in data)
 
 
