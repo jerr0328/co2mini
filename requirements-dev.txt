@@ -1,3 +1,4 @@
+-c requirements.txt
 black
 build
 flake8
