@@ -7,7 +7,7 @@ User=pi
 Type=idle
 WorkingDirectory=/home/pi
 ExecStart=/home/pi/.local/bin/co2mini /dev/co2mini0
-Restart=always
+Restart=on-failure
 RestartSec=3
 Environment=PYTHONUNBUFFERED=1
 
