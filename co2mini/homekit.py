@@ -1,3 +1,4 @@
+import asyncio
 import signal
 from typing import Optional
 
@@ -74,23 +75,30 @@ class DHTSensor(Accessory):
         self.dht_sensor.running = False
 
 
-def start_homekit(co2meter, dht_sensor: Optional[dht.DHT] = None):
-    # Start the accessory on port 51826
-    driver = AccessoryDriver(port=51826)
-
+async def start_co2(co2meter, loop):
+    driver = AccessoryDriver(port=51826, persist_file="co2accessory.state", loop=loop)
     driver.add_accessory(
         accessory=CO2Sensor(co2meter=co2meter, driver=driver, display_name="CO2 Sensor")
     )
-    if dht_sensor is not None:
-        driver.add_accessory(
-            accessory=DHTSensor(
-                dht_sensor=dht_sensor, driver=driver, display_name="DHT Sensor"
-            )
-        )
-
-    # We want SIGTERM (terminate) to be handled by the driver itself,
-    # so that it can gracefully stop the accessory, server and advertising.
     signal.signal(signal.SIGTERM, driver.signal_handler)
 
-    # Start it!
-    driver.start()
+    await driver.async_start()
+
+
+async def start_dht(dht_sensor, loop):
+    driver = AccessoryDriver(port=51827, persist_file="dhtaccessory.state", loop=loop)
+    driver.add_accessory(
+        accessory=DHTSensor(
+            dht_sensor=dht_sensor, driver=driver, display_name="DHT Sensor"
+        )
+    )
+    signal.signal(signal.SIGTERM, driver.signal_handler)
+    await driver.async_start()
+
+
+def start_homekit(co2meter, dht_sensor: Optional[dht.DHT] = None):
+    loop = asyncio.new_event_loop()
+    loop.create_task(start_co2(co2meter=co2meter, loop=loop))
+    if dht_sensor is not None:
+        loop.create_task(start_dht(dht_sensor=dht_sensor, loop=loop))
+    loop.run_forever()
