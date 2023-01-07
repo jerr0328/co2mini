@@ -1,2 +1,3 @@
+adafruit-circuitpython-dht
 HAP-Python
 prometheus_client
