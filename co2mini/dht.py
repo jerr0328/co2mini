@@ -37,7 +37,7 @@ class DHTSensor(threading.Thread):
             self.last_results.update(results)
             if self._callback is not None:
                 self._callback(results)
-            time.sleep(2)
+            time.sleep(5)
 
     def get_temperature(self) -> Optional[float]:
         try:
