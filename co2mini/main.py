@@ -45,7 +45,7 @@ def main():
     dht_sensor = None
 
     if config.DHT_DEVICE is not None and config.DHT_PIN is not None:
-        dht_sensor = dht.DHT(callback=dht_callback)
+        dht_sensor = dht.DHTSensor(callback=dht_callback)
         dht_sensor.start()
 
     try:
