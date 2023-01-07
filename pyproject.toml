@@ -35,3 +35,5 @@ co2mini = "co2mini.main:main"
 
 [tool.isort]
 profile = "black"
+
+[tool.setuptools_scm]

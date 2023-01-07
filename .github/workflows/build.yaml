@@ -1,12 +1,12 @@
 ---
-name: Upload Python Package
+name: Build and push pre-release version
 
 "on":
-  release:
-    types: [created]
+  push:
+    branches: [main]
 
 jobs:
-  publish:
+  build-and-push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
-      - name: Build and publish
+      - name: Build and publish pre-release
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
