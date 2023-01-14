@@ -15,6 +15,8 @@ CO2_ALERT_CLEAR_THRESHOLD = 1100
 # Seconds between updates to homekit
 UPDATE_INTERVAL_SECONDS = 60
 
+loop = asyncio.new_event_loop()
+
 
 class CO2Sensor(Accessory):
     """CO2 HomeKit Sensor"""
@@ -96,9 +98,16 @@ async def start_dht(dht_sensor, loop):
     await driver.async_start()
 
 
+def stop_homekit():
+    loop.stop()
+
+
 def start_homekit(co2meter, dht_sensor: Optional[dht.DHT] = None):
-    loop = asyncio.new_event_loop()
     loop.create_task(start_co2(co2meter=co2meter, loop=loop))
     if dht_sensor is not None:
         loop.create_task(start_dht(dht_sensor=dht_sensor, loop=loop))
-    loop.run_forever()
+    loop.add_signal_handler(signal.SIGTERM, stop_homekit)
+    try:
+        loop.run_forever()
+    finally:
+        loop.close()

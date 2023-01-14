@@ -26,7 +26,7 @@ class DHTSensor(threading.Thread):
         self._callback = callback
         self.last_results = {}
         if DHT is not None and PIN is not None:
-            self.DHT = DHT(PIN)
+            self.DHT = DHT(PIN, use_pulseio=False)
         else:
             self.DHT = None
             self.running = False
@@ -42,14 +42,14 @@ class DHTSensor(threading.Thread):
     def get_temperature(self) -> Optional[float]:
         try:
             return self.DHT.temperature
-        except RuntimeError:
+        except (RuntimeError, OSError):
             logger.exception("Failed to fetch temperature data from DHT")
             return None
 
     def get_humidity(self) -> Optional[float]:
         try:
             return self.DHT.humidity
-        except RuntimeError:
+        except (RuntimeError, OSError):
             logger.exception("Failed to fetch humidity data from DHT")
             return None
 
