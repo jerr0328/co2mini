@@ -5,5 +5,5 @@ flake8
 isort
 pre-commit
 setuptools
-twine
+setuptools-scm
 wheel
