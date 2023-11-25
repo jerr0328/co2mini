@@ -1,6 +1,42 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "co2mini"
+description = "Monitor CO2 levels with Prometheus and/or HomeKit"
+readme = "README.md"
+authors = [{ email = "jeremy@jerr.dev" }, { name = "Jeremy Mayeres" }]
+requires-python = ">=3.9"
+keywords = [
+    "co2",
+    "co2mini",
+    "temperature",
+    "humidity",
+    "sensors",
+    "prometheus",
+    "homekit",
+]
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+]
+dependencies = ["prometheus_client"]
+dynamic = ["version"]
+
+[project.urls]
+repository = "https://github.com/jerr0328/co2-mini"
+
+[project.optional-dependencies]
+homekit = ["HAP-python"]
+
+[project.scripts]
+co2mini = "co2mini.main:main"
+
 [tool.isort]
 profile = "black"
 
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+[tool.setuptools_scm]
