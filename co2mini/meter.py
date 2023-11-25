@@ -29,6 +29,10 @@ def _hd(data):
     return " ".join("%02X" % e for e in data)
 
 
+def _is_valid_msg(data):
+    return data[4] == 0x0D and (sum(data[:3]) & 0xFF) == data[3]
+
+
 class CO2Meter(threading.Thread):
     _key = [0xC4, 0xC6, 0xC0, 0x92, 0x40, 0x23, 0xDC, 0x96]
     _device = ""
@@ -58,10 +62,11 @@ class CO2Meter(threading.Thread):
         """
         try:
             data = list(self._file.read(8))
-            decrypted = self._decrypt(data)
-            if decrypted[4] != 0x0D or (sum(decrypted[:3]) & 0xFF) != decrypted[3]:
-                logger.error("Checksum error: %s => %s", _hd(data), _hd(decrypted))
+            if _is_valid_msg(data):
+                decrypted = data
             else:
+                decrypted = self._decrypt(data)
+            if _is_valid_msg(decrypted):
                 operation = decrypted[0]
                 val = decrypted[1] << 8 | decrypted[2]
                 self._values[operation] = _convert_value(operation, val)
@@ -70,6 +75,9 @@ class CO2Meter(threading.Thread):
                         operation == CO2METER_HUM and val != 0
                     ):
                         self._callback(sensor=operation, value=self._values[operation])
+            else:
+                logger.error("Checksum error: %s => %s", _hd(data), _hd(decrypted))
+
         except Exception:
             logger.exception("Exception reading data")
             self.running = False
