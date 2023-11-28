@@ -12,29 +12,27 @@ HA_PREFIX = (
 )
 HA_TEMP_PREFIX = f"{HA_PREFIX}_temp"
 HA_CO2_PREFIX = f"{HA_PREFIX}_co2"
-EXPIRE_AFTER_SECONDS = 600
+EXPIRE_AFTER_SECONDS = 300
 
 
 def send_discovery_message(client: mqtt.Client):
-    logger.info("Sending discovery message to mqtt")
-    device = {"identifiers": [config.HOSTNAME], "name": config.NAME}
+    logger.info(f"Sending discovery message to mqtt (prefix: {HA_PREFIX})")
+    device = {"ids": [config.HOSTNAME], "name": config.NAME}
     temp_config = {
-        "device_class": "temperature",
+        "dev_cla": "temperature",
         "expire_after": EXPIRE_AFTER_SECONDS,
-        "icon": "mdi:temperature-celsius",
-        "state_topic": f"{HA_TEMP_PREFIX}/state",
-        "unit_of_measurement": "°C",
-        "unique_id": f"{config.MQTT_OBJECT_ID}_T",
-        "device": device,
+        "stat_t": f"{HA_TEMP_PREFIX}/state",
+        "unit_of_meas": "°C",
+        "uniq_id": f"{config.MQTT_OBJECT_ID}_T",
+        "dev": device,
     }
     co2_config = {
-        "device_class": "carbon_dioxide",
+        "dev_cla": "carbon_dioxide",
         "expire_after": EXPIRE_AFTER_SECONDS,
-        "icon": "mdi:periodic-table-co2",
-        "state_topic": f"{HA_CO2_PREFIX}/state",
-        "unit_of_measurement": "ppm",
-        "unique_id": f"{config.MQTT_OBJECT_ID}_CO2",
-        "device": device,
+        "stat_t": f"{HA_CO2_PREFIX}/state",
+        "unit_of_meas": "ppm",
+        "uniq_id": f"{config.MQTT_OBJECT_ID}_CO2",
+        "dev": device,
     }
     client.publish(f"{HA_TEMP_PREFIX}/config", json.dumps(temp_config))
     client.publish(f"{HA_CO2_PREFIX}/config", json.dumps(co2_config))
