@@ -5,10 +5,15 @@ The core logic comes from [this hackaday article](https://hackaday.io/project/53
 
 ## Setup
 
-Note this assumes you are running on a Raspberry Pi running Raspberry Pi OS (Buster)
+Note this assumes you are running on a Raspberry Pi running Raspberry Pi OS (Bullseye)
 
 1. Install Python 3
 2. Install the monitor with `python3 -m pip install co2mini[homekit]` (remove `[homekit]` if you don't use HomeKit)
 3. Set up CO2 udev rules by copying `90-co2mini.rules` to `/etc/udev/rules.d/90-co2mini.rules`
 4. Set up the service by copying `co2mini.service` to `/etc/systemd/system/co2mini.service`
 5. Run `systemctl enable co2mini.service`
+
+### Dietpi users
+
+- Be sure to install `Python3 pip` as well (ID `130`)
+- Make sure the dietpi user is in `plugdev` group (`sudo usermod -aG plugdev dietpi`)

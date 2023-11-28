@@ -16,6 +16,7 @@ EXPIRE_AFTER_SECONDS = 600
 
 
 def send_discovery_message(client: mqtt.Client):
+    logger.info("Sending discovery message to mqtt")
     device = {"identifiers": [config.HOSTNAME], "name": config.NAME}
     temp_config = {
         "device_class": "temperature",
@@ -70,5 +71,7 @@ def send_temp_value(client: mqtt.Client, value: float):
 
 def start_client(client: mqtt.Client):
     """Blocking call to connect to the MQTT broker and loop forever"""
+    logger.info(f"Connecting to {config.MQTT_BROKER}")
     client.connect(config.MQTT_BROKER)
     client.loop_forever(timeout=1.0, max_packets=1, retry_first_connection=False)
+    logger.error("MQTT Failure")
