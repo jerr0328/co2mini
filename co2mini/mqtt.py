@@ -1,15 +1,9 @@
 import json
 import logging
 
+import paho.mqtt.client as mqtt
+
 from . import config
-
-try:
-    import paho.mqtt.client as mqtt
-except ImportError:
-    MQTT_ENABLED = False
-else:
-    MQTT_ENABLED = config.MQTT_ENABLED
-
 
 logger = logging.getLogger(__name__)
 HA_STATUS_TOPIC = f"{config.MQTT_DISCOVERY_PREFIX}/status"

@@ -6,7 +6,29 @@ from functools import partial
 
 from prometheus_client import Gauge, start_http_server
 
-from . import config, meter, mqtt
+from . import config, meter
+
+try:
+    from . import mqtt
+except ImportError:
+
+    class mqtt:
+        @staticmethod
+        def send_co2_value(*args, **kwargs):
+            pass
+
+        @staticmethod
+        def send_temp_value(*args, **kwargs):
+            pass
+
+        @staticmethod
+        def get_mqtt_client():
+            pass
+
+        @staticmethod
+        def start_client(*args, **kwargs):
+            pass
+
 
 co2_gauge = Gauge("co2", "CO2 levels in PPM")
 temp_gauge = Gauge("temperature", "Temperature in C")
@@ -49,7 +71,7 @@ def main():
     # Expose metrics
     start_http_server(config.PROMETHEUS_PORT)
 
-    mqtt_client = mqtt.get_mqtt_client() if mqtt.MQTT_ENABLED else None
+    mqtt_client = mqtt.get_mqtt_client() if config.MQTT_ENABLED else None
 
     co2meter = meter.CO2Meter(device=device, callback=generate_callback(mqtt_client))
     co2meter.start()
@@ -63,7 +85,7 @@ def main():
         pass
 
     if mqtt_client:
-        mqtt.start_client()
+        mqtt.start_client(mqtt_client)
 
     # Ensure thread doesn't just end without cleanup
     co2meter.join()
