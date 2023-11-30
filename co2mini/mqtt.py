@@ -52,7 +52,7 @@ def on_connect(client: mqtt.Client, *args, **kwargs):
 
 
 def handle_homeassistant_status(client: mqtt.Client, userdata, message):
-    status = message.payload.strip()
+    status = message.payload.decode()
     logger.info(f"Got homeassistant status: {status}")
     if status == "online":
         send_discovery_message(client)
