@@ -17,5 +17,6 @@ with env.prefixed("MQTT_"):
     MQTT_USERNAME: str = env.str("USERNAME", "")
     MQTT_PASSWORD: str = env.str("PASSWORD", "")
     MQTT_DISCOVERY_PREFIX: str = env.str("DISCOVERY_PREFIX", "homeassistant")
+    MQTT_RETAIN_DISCOVERY: bool = env.str("RETAIN_DISCOVERY", False)
     # Object ID needs to be unique
     MQTT_OBJECT_ID: str = env.str("OBJECT_ID", f"co2mini_{HOSTNAME}")
