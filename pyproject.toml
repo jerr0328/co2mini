@@ -24,14 +24,16 @@ classifiers = [
     "Operating System :: OS Independent",
     "Development Status :: 3 - Alpha",
 ]
-dependencies = ["prometheus_client"]
+dependencies = ["prometheus_client", "environs"]
 dynamic = ["version"]
 
 [project.urls]
 repository = "https://github.com/jerr0328/co2-mini"
 
 [project.optional-dependencies]
-homekit = ["HAP-python"]
+homekit = ["hap-python"]
+mqtt = ["paho-mqtt"]
+all = ["co2mini[homekit,mqtt]"]
 
 [project.scripts]
 co2mini = "co2mini.main:main"
