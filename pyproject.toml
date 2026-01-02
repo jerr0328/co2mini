@@ -17,10 +17,10 @@ keywords = [
     "prometheus",
     "homekit",
 ]
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Development Status :: 3 - Alpha",
 ]
@@ -28,7 +28,7 @@ dependencies = ["prometheus_client", "environs"]
 dynamic = ["version"]
 
 [project.urls]
-repository = "https://github.com/jerr0328/co2-mini"
+repository = "https://github.com/jerr0328/co2mini"
 
 [project.optional-dependencies]
 homekit = ["hap-python"]
@@ -65,9 +65,6 @@ extend-select = [
     "UP",   # pyupgrade
     "W",    # pycodestyle warnings
 ]
-
-[tool.isort]
-profile = "black"
 
 [tool.setuptools_scm]
 
