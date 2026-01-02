@@ -2,16 +2,24 @@
 Module for reading out CO2Meter USB devices
 Code adapted from Michael Heinemann under MIT License: https://github.com/heinemml/CO2Meter
 """
+
 import fcntl
 import logging
 import threading
+from pathlib import Path
 
 CO2METER_CO2 = 0x50
 CO2METER_TEMP = 0x42
 CO2METER_HUM = 0x41
 HIDIOCSFEATURE_9 = 0xC0094806
 
+KEY = [0xC4, 0xC6, 0xC0, 0x92, 0x40, 0x23, 0xDC, 0x96]
+
 logger = logging.getLogger(__name__)
+
+
+class ThreadNotRunningError(OSError):
+    """Exception raised when the reading thread is not running"""
 
 
 def _convert_value(sensor, value):
@@ -26,7 +34,7 @@ def _convert_value(sensor, value):
 
 def _hd(data):
     """Helper function for printing the raw data"""
-    return " ".join("%02X" % e for e in data)
+    return " ".join(f"{e:02X}" for e in data)
 
 
 def _is_valid_msg(data):
@@ -34,25 +42,20 @@ def _is_valid_msg(data):
 
 
 class CO2Meter(threading.Thread):
-    _key = [0xC4, 0xC6, 0xC0, 0x92, 0x40, 0x23, 0xDC, 0x96]
-    _device = ""
-    _values = {}
-    _file = ""
-    running = True
-    _callback = None
-
     def __init__(self, device="/dev/co2mini0", callback=None):
         super().__init__(daemon=True)
-        self._device = device
+        self._device = Path(device)
         self._callback = callback
-        self._file = open(device, "a+b", 0)
-
-        set_report = [0] + self._key
-        fcntl.ioctl(self._file, HIDIOCSFEATURE_9, bytearray(set_report))
+        self._values = {}
+        self.running = True
 
     def run(self):
-        while self.running:
-            self._read_data()
+        with self._device.open("a+b", 0) as f:
+            self._file = f
+            set_report = [0, *KEY]
+            fcntl.ioctl(self._file, HIDIOCSFEATURE_9, bytearray(set_report))
+            while self.running:
+                self._read_data()
 
     def _read_data(self):
         """
@@ -62,19 +65,16 @@ class CO2Meter(threading.Thread):
         """
         try:
             data = list(self._file.read(8))
-            if _is_valid_msg(data):
-                decrypted = data
-            else:
-                decrypted = self._decrypt(data)
+            decrypted = data if _is_valid_msg(data) else self._decrypt(data)
             if _is_valid_msg(decrypted):
                 operation = decrypted[0]
                 val = decrypted[1] << 8 | decrypted[2]
                 self._values[operation] = _convert_value(operation, val)
-                if self._callback is not None:
-                    if operation in {CO2METER_CO2, CO2METER_TEMP} or (
-                        operation == CO2METER_HUM and val != 0
-                    ):
-                        self._callback(sensor=operation, value=self._values[operation])
+                if self._callback is not None and (
+                    operation in {CO2METER_CO2, CO2METER_TEMP}
+                    or (operation == CO2METER_HUM and val != 0)
+                ):
+                    self._callback(sensor=operation, value=self._values[operation])
             else:
                 logger.error("Checksum error: %s => %s", _hd(data), _hd(decrypted))
 
@@ -117,7 +117,7 @@ class CO2Meter(threading.Thread):
         :returns dict with value or empty
         """
         if not self.running:
-            raise IOError("worker thread couldn't read data")
+            raise ThreadNotRunningError()
         result = {}
         if CO2METER_CO2 in self._values:
             result = {"co2": self._values[CO2METER_CO2]}
@@ -130,7 +130,7 @@ class CO2Meter(threading.Thread):
         :returns dict with value or empty
         """
         if not self.running:
-            raise IOError("worker thread couldn't read data")
+            raise ThreadNotRunningError()
         result = {}
         if CO2METER_TEMP in self._values:
             result = {"temperature": self._values[CO2METER_TEMP]}
@@ -145,7 +145,7 @@ class CO2Meter(threading.Thread):
         :returns dict with value or empty
         """
         if not self.running:
-            raise IOError("worker thread couldn't read data")
+            raise ThreadNotRunningError()
         result = {}
         if CO2METER_HUM in self._values and self._values[CO2METER_HUM] != 0:
             result = {"humidity": self._values[CO2METER_HUM]}

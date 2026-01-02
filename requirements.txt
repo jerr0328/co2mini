@@ -1,4 +1,0 @@
-environs
-hap-python
-paho-mqtt
-prometheus_client
