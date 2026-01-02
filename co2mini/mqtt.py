@@ -1,7 +1,11 @@
 import json
 import logging
 
-import paho.mqtt.client as mqtt
+try:
+    import paho.mqtt.client as mqtt
+except ImportError:
+    mqtt = None
+
 
 from . import config
 

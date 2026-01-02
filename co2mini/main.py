@@ -6,29 +6,7 @@ from functools import partial
 
 from prometheus_client import Gauge, start_http_server
 
-from . import config, meter
-
-try:
-    from . import mqtt
-except ImportError:
-
-    class mqtt:
-        @staticmethod
-        def send_co2_value(*args, **kwargs):
-            pass
-
-        @staticmethod
-        def send_temp_value(*args, **kwargs):
-            pass
-
-        @staticmethod
-        def get_mqtt_client():
-            pass
-
-        @staticmethod
-        def start_client(*args, **kwargs):
-            pass
-
+from . import config, meter, mqtt
 
 co2_gauge = Gauge("co2", "CO2 levels in PPM")
 temp_gauge = Gauge("temperature", "Temperature in C")
@@ -79,7 +57,7 @@ def main():
     try:
         from .homekit import start_homekit
 
-        logging.info("Starting homekit")
+        logger.info("Starting homekit")
         start_homekit(co2meter)
     except ImportError:
         pass

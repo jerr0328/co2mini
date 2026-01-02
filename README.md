@@ -5,7 +5,7 @@ The core logic comes from [this hackaday article](https://hackaday.io/project/53
 
 ## Setup
 
-Note this assumes you are running on a Raspberry Pi running Raspberry Pi OS (Bullseye)
+Note this assumes you are running on a Raspberry Pi running Raspberry Pi OS (Bullseye/Trixie)
 
 1. Install Python 3
 2. Install the monitor with `python3 -m pip install co2mini[homekit]` (remove `[homekit]` if you don't use HomeKit)
@@ -59,3 +59,8 @@ If this happens, it seems like the easiest thing to do is to remove the device f
 
 - Be sure to install `Python3 pip` as well (ID `130`)
 - Make sure the dietpi user is in `plugdev` group (`sudo usermod -aG plugdev dietpi`)
+
+## Development
+
+This project assumes you will use [uv](https://docs.astral.sh/uv/) to configure the virtual environment and manage dependencies.
+Formatting and linting is handled with [ruff](https://docs.astral.sh/ruff/). Pre-commit is using [prek](https://prek.j178.dev), though pre-commit would also work (be sure to install it separately).
