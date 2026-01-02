@@ -12,6 +12,8 @@ jobs:
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
+    env:
+      SETUPTOOLS_SCM_OVERRIDES_FOR_CO2MINI: '{local_scheme = "no-local-version"}'
     steps:
       - uses: actions/checkout@v6
         with:
