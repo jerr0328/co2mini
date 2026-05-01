@@ -73,6 +73,6 @@ dev = [
     "build>=1.3.0",
     "ruff>=0.14.10",
     "setuptools>=80.9.0",
-    "setuptools-scm>=9.2.2",
+    "setuptools-scm*",
     "wheel>=0.45.1",
 ]
